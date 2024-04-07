@@ -1,4 +1,5 @@
 import my_functions
+import datetime
 
 FUNCTION_OPTIONS = ["Make a Rental Booking", "Review a Booking", "Manage Inventory", "Exit"]
 
@@ -45,6 +46,21 @@ def display_booking_options() -> tuple[list, list]:
     return equip, rent
 
 
+def update_equipment(chosen_equip: str):
+    with open("equipment_data.txt", "r") as file:
+        lines = file.readlines()
+
+    for index, line in enumerate(lines):
+        if chosen_equip in line:
+            line = line.rstrip()
+            sline = line.split(",")
+            lines[index] = f"{sline[0]},{sline[1]},{int(sline[2])-1},{int(sline[3])+1}\n"
+            break
+
+    with open("equipment_data.txt", "w") as file:
+        file.writelines(lines)
+
+
 def make_a_booking():
     print(FUNCTION_OPTIONS[0])
 
@@ -54,14 +70,18 @@ def make_a_booking():
 
     equipment, rent = display_booking_options()
 
-    chosen_equip = my_functions.get_user_int_in_range(1, len(equipment)+1, "Enter index number to select equipment: ")
-    rent_duration = my_functions.get_user_int_in_range(1, 8, f"How many days would you to rent \"{equipment[chosen_equip-1]}\" for?: ")
+    chosen_equip = my_functions.get_user_int_in_range(1, len(equipment)+1, "Enter index number to select equipment: ")-1
+    rent_duration = my_functions.get_user_int_in_range(1, 8, f"How many days would you to rent \"{equipment[chosen_equip]}\" for?: ")
 
     total_cost = rent[chosen_equip] * rent_duration
 
-    with open(f"{first_name}_{last_name}.txt", "w") as file:
+    with open(f"{first_name}_{last_name}.txt", "a") as file:
         print(f"{first_name},{last_name},{phone_number},{equipment},{rent_duration},{total_cost}", file=file)
 
+    with open("bookings_2024.txt", "a") as file:
+        print(f"{first_name},{last_name},{datetime.date.today().strftime('%d/%m/%Y')}", file=file)
+
+    update_equipment(equipment[chosen_equip])
 
 
 def main():
