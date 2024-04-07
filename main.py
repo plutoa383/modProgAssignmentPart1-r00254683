@@ -25,9 +25,7 @@ def display_booking_options() -> tuple[list, list]:
     displays available booking options
     :return: equip, rent
     """
-    print("-"*34)
-    print(f"{'ID':<3}|{'Equipment':^15}|{'Daily rent':^12}|")
-    print("-" * 34)
+    print(f"{'-'*34}\n{'ID':<3}|{'Equipment':^15}|{'Daily rent':^12}|{'-'*34}")
     with open("equipment_data.txt", "r") as file:
         index = 0
         equip = []
@@ -61,27 +59,40 @@ def update_equipment(chosen_equip: str):
         file.writelines(lines)
 
 
+def print_receipt(fname: str, lname: str):
+    with open(f"{fname}_{lname}.txt", "r") as file:
+        for raw_line in file:
+            line = raw_line.rstrip()
+            line = line.split(",")
+
+    print(f"{'-' * 32}\n{line[0]}, here is your receipt:\n{'-' * 32}")
+    print(f"{'Equipment:':<16}{line[3]}\n{'Total Cost:':<16}${float(line[5]):,.2f}\n{'Rent Duration:':<16}{line[4]}")
+    print(f"{'-' * 32}")
+
+
 def make_a_booking():
     print(FUNCTION_OPTIONS[0])
 
-    first_name = my_functions.get_valid_name(True)
-    last_name = my_functions.get_valid_name(False)
+    first_name = my_functions.get_valid_name(True).capitalize()
+    last_name = my_functions.get_valid_name(False).capitalize()
     phone_number = my_functions.get_valid_phone()
 
     equipment, rent = display_booking_options()
 
     chosen_equip = my_functions.get_user_int_in_range(1, len(equipment)+1, "Enter index number to select equipment: ")-1
-    rent_duration = my_functions.get_user_int_in_range(1, 8, f"How many days would you to rent \"{equipment[chosen_equip]}\" for?: ")
+    rent_duration = my_functions.get_user_int_in_range(1, 8, f"How many days do you want to rent a \"{equipment[chosen_equip]}\" for?: ")
 
     total_cost = rent[chosen_equip] * rent_duration
 
     with open(f"{first_name}_{last_name}.txt", "a") as file:
-        print(f"{first_name},{last_name},{phone_number},{equipment},{rent_duration},{total_cost}", file=file)
+        print(f"{first_name},{last_name},{phone_number},{equipment[chosen_equip]},{rent_duration},{total_cost}", file=file)
 
     with open("bookings_2024.txt", "a") as file:
         print(f"{first_name},{last_name},{datetime.date.today().strftime('%d/%m/%Y')}", file=file)
 
     update_equipment(equipment[chosen_equip])
+
+    print_receipt(first_name, last_name)
 
 
 def main():
