@@ -54,6 +54,10 @@ def get_valid_name(first_or_last: bool) -> str:
 
 
 def get_valid_phone() -> int:
+    """
+    gets a valid phone number from the user
+    :return: valid_phone
+    """
     while True:
         valid_phone = get_pos_num("Enter your phone number: ")
         if len(f"{valid_phone}") == 10:
@@ -64,9 +68,27 @@ def get_valid_phone() -> int:
     return valid_phone
 
 
+def get_user_int_in_range(lower: int, upper: int, prompt: str) -> int:
+    """
+    gets an integer from the user that's within a custom range
+    :param lower: lower limit of range
+    :param upper: upper limit of range
+    :param prompt: string used to interact with the user
+    :return: valid_int
+    """
+    while True:
+        valid_int = get_pos_num(prompt)
+        if valid_int in range(lower, upper):
+            break
+        else:
+            print("enter a valid number")
+
+    return valid_int
+
+
 if __name__ == '__main__':
     # get_pos_num() test
-    print(get_pos_num("Enter positive integer"))
+    print(get_pos_num("Enter a positive integer"))
 
     # get_non_empty_string() test
     print(get_non_empty_string("Enter a string"))
@@ -77,5 +99,8 @@ if __name__ == '__main__':
 
     # get_valid_phone() test
     print(get_valid_phone())
+
+    # get_user_int_in_range() test
+    print(get_user_int_in_range(1, 11, "Enter a number from 1 to 10"))
 
 
