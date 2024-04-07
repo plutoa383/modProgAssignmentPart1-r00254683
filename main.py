@@ -95,6 +95,48 @@ def make_a_booking():
     print_receipt(first_name, last_name)
 
 
+def manage_inventory():
+    if verify_login() is True:
+        print("hewwo")
+
+
+def verify_login() -> bool:
+    user_found = False
+    user_index = 0
+    attempts = 0
+    with open("admin_details.txt", "r") as file:
+        usernames = []
+        passwords = []
+        for raw_line in file:
+            line = raw_line.rstrip()
+            line = line.split(" ")
+            usernames.append(line[0])
+            passwords.append(line[1])
+    print(usernames)
+    print(passwords)
+
+    while not user_found:
+        usrnm = my_functions.get_non_empty_string("Enter administrator username: ")
+        for index, usr in enumerate(usernames):
+            if usrnm == usr:
+                user_found = True
+                user_index = index
+                break
+
+    while attempts < 3:
+        pswrd = input("Enter password: ")
+        attempts += 1
+
+        if pswrd == passwords[user_index]:
+            print("true")
+            return True
+        else:
+            print(f"invalid password - {3-attempts} attempts left")
+
+    print("Too many invalid attempts")
+    return False
+
+
 def main():
     while True:
         user_choice = get_user_choice()
@@ -103,7 +145,7 @@ def main():
         elif user_choice == 2:
             print("under development")
         elif user_choice == 3:
-            print("under development")
+            manage_inventory()
         else:
             if my_functions.verify_user_choice("Are you sure you want to exit? [Y/N]"):
                 break
