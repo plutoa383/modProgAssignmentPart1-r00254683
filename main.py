@@ -19,8 +19,22 @@ def get_user_choice() -> int:
     return user_choice
 
 
+def make_a_booking():
+    print("hewwo")
+
+
 def main():
-    print(get_user_choice())
+    while True:
+        user_choice = get_user_choice()
+        if user_choice == 1:
+            make_a_booking()
+        elif user_choice == 2:
+            print("under development")
+        elif user_choice == 3:
+            print("under development")
+        else:
+            if my_functions.verify_user_choice("Are you sure you want to exit? [Y/N]"):
+                break
 
 
 main()

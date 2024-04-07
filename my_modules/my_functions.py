@@ -86,6 +86,17 @@ def get_user_int_in_range(lower: int, upper: int, prompt: str) -> int:
     return valid_int
 
 
+def verify_user_choice(prompt: str) -> bool:
+    while True:
+        verify = get_non_empty_string(prompt)
+        if verify.lower() in ["y", "yes"]:
+            return True
+        elif verify.lower() in ["n", "no"]:
+            return False
+        else:
+            print("enter a valid choice")
+
+
 if __name__ == '__main__':
     # get_pos_num() test
     print(get_pos_num("Enter a positive integer"))
@@ -103,4 +114,5 @@ if __name__ == '__main__':
     # get_user_int_in_range() test
     print(get_user_int_in_range(1, 11, "Enter a number from 1 to 10"))
 
-
+    # verify_user_choice() test
+    print(verify_user_choice("(Test) Are you sure? (Y/N)"))
