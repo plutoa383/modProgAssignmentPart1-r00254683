@@ -10,11 +10,10 @@ def get_user_choice() -> int:
     :return: user_choice
     """
     print(f"\n{'='*48}\n")
-    print("What would you like to do?")
-    print("-"*27)
+    print(f"{'-'*30}\n|{'What would you like to do?':^28}|\n{'-'*30}")
     for index, option in enumerate(FUNCTION_OPTIONS, 1):
-        print(f"[{index}] {option:<22}|")
-    print("-" * 27)
+        print(f"[{index}] {option:<25}|")
+    print("-"*30)
     user_choice = my_functions.get_user_int_in_range(1, 5, "Enter index number to select choice: ")
     print(f"\n{'='*48}\n")
     return user_choice
@@ -45,6 +44,11 @@ def display_booking_options() -> tuple[list, list]:
 
 
 def update_equipment(chosen_equip: str):
+    """
+    updates equipment stock after a booking
+    :param chosen_equip: equipment to be updated
+    :return: NONE
+    """
     with open("equipment_data.txt", "r") as file:
         lines = file.readlines()
 
@@ -60,6 +64,12 @@ def update_equipment(chosen_equip: str):
 
 
 def print_receipt(fname: str, lname: str):
+    """
+    prints customer's latest receipt
+    :param fname: customer's first name
+    :param lname: customer's last name
+    :return: NONE
+    """
     with open(f"{fname}_{lname}.txt", "r") as file:
         for raw_line in file:
             line = raw_line.rstrip()
@@ -71,6 +81,10 @@ def print_receipt(fname: str, lname: str):
 
 
 def make_a_booking():
+    """
+    makes a booking
+    :return: NONE
+    """
     print(FUNCTION_OPTIONS[0])
 
     first_name = my_functions.get_valid_name(True).capitalize()
@@ -95,12 +109,29 @@ def make_a_booking():
     print_receipt(first_name, last_name)
 
 
-def manage_inventory():
+def admin_options():
     if verify_login() is True:
-        print("hewwo")
+        admin_function_options = ["Add New Equipment", "Remove An Equipment", "Update Equipment Price"]
+
+        print(f"{'-'*30}\n|{'Administrator Options':^28}|\n{'-'*30}")
+        for index, option in enumerate(admin_function_options, 1):
+            print(f"[{index}] {option:<25}|")
+        print("-"*30)
+        admin_choice = my_functions.get_user_int_in_range(1, 4, "Enter index number of your choice: ")
+
+        if admin_choice == 1:
+            print("add new equipment")
+        elif admin_choice == 2:
+            print("remove an equipment")
+        else:
+            print("update equipment rental")
 
 
 def verify_login() -> bool:
+    """
+    login interface for administrators
+    :return: bool
+    """
     user_found = False
     user_index = 0
     attempts = 0
@@ -112,8 +143,6 @@ def verify_login() -> bool:
             line = line.split(" ")
             usernames.append(line[0])
             passwords.append(line[1])
-    print(usernames)
-    print(passwords)
 
     while not user_found:
         usrnm = my_functions.get_non_empty_string("Enter administrator username: ")
@@ -128,7 +157,7 @@ def verify_login() -> bool:
         attempts += 1
 
         if pswrd == passwords[user_index]:
-            print("true")
+            print("Logged in\n")
             return True
         else:
             print(f"invalid password - {3-attempts} attempts left")
@@ -145,7 +174,7 @@ def main():
         elif user_choice == 2:
             print("under development")
         elif user_choice == 3:
-            manage_inventory()
+            admin_options()
         else:
             if my_functions.verify_user_choice("Are you sure you want to exit? [Y/N]"):
                 break

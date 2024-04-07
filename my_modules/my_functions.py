@@ -87,6 +87,11 @@ def get_user_int_in_range(lower: int, upper: int, prompt: str) -> int:
 
 
 def verify_user_choice(prompt: str) -> bool:
+    """
+    asks for user to verify their choice
+    :param prompt:
+    :return: bool
+    """
     while True:
         verify = get_non_empty_string(prompt)
         if verify.lower() in ["y", "yes"]:
