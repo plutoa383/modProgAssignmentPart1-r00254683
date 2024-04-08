@@ -4,7 +4,7 @@ import datetime
 # list holds options for regular users
 FUNCTION_OPTIONS = ["Make a Rental Booking", "Review a Booking", "Manage Inventory", "Exit"]
 # list hold options for administrators
-ADMIN_FUNCTIONS_OPTIONS = ["Add New Equipment", "Remove An Equipment", "Update Equipment Price"]
+ADMIN_FUNCTIONS_OPTIONS = ["Add New Equipment", "Remove An Equipment", "Update Equipment Price", "Generate Rental Report"]
 
 def get_user_choice() -> int:
     """
