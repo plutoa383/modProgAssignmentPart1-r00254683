@@ -430,14 +430,12 @@ def generate_rental_report():
     date_of_report = datetime.date.today().strftime("%d/%m/%Y")
     total_revenue, total_bookings, total_current_bookings, top_current_equip, bottom_current_equip = get_report_info()
 
-
-
-
-
-
-
-
-
+    print(f"{'-'*24}\nGeneral Rental Report for {date_of_report}\n{'-'*24}")
+    print(f"[1] Total Revenue: ${total_revenue:,.2f}")
+    print(f"[2] Total Bookings: {total_bookings}")
+    print(f"[3] Total Current Bookings: {total_current_bookings}")
+    print(f"[4] Top Equipment (Currently rented): {top_current_equip.capitalize()}")
+    print(f"[5] Bottom Equipment (Currently rented): {bottom_current_equip.capitalize()}")
 
 
 def main():
