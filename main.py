@@ -2,9 +2,9 @@ import my_functions
 import datetime
 
 # list holds options for regular users
-FUNCTION_OPTIONS = ["Make a Rental Booking", "Review a Booking", "Manage Inventory", "Exit"]
+FUNCTION_OPTIONS = ["Make a Rental Booking", "Review a Booking", "Manage Inventory", "Generate Rental Report", "Exit"]
 # list hold options for administrators
-ADMIN_FUNCTIONS_OPTIONS = ["Add New Equipment", "Remove An Equipment", "Update Equipment Price", "Generate Rental Report"]
+ADMIN_FUNCTIONS_OPTIONS = ["Add New Equipment", "Remove An Equipment", "Update Equipment Price"]
 
 def get_user_choice() -> int:
     """
@@ -19,7 +19,7 @@ def get_user_choice() -> int:
     for index, option in enumerate(FUNCTION_OPTIONS, 1):
         print(f"[{index}] {option:<25}|")
     print("-"*30)
-    user_choice = my_functions.get_user_int_in_range(1, 5, "Enter index number to select choice: ")
+    user_choice = my_functions.get_user_int_in_range(1, 6, "Enter index number to select choice: ")
     print(f"\n{'='*48}\n")
     return user_choice
 
@@ -150,8 +150,9 @@ def review_booking():
         for line in file:
             sline = line.rstrip()
             sline = sline.split(",")
-            # stores customer names into list
-            names.append(f"{sline[0]} {sline[1]}")
+            # stores customer names into list, without repeating
+            if f"{sline[0]} {sline[1]}" not in names:
+                names.append(f"{sline[0]} {sline[1]}")
 
     # gets name to search for
     query_fname = my_functions.get_valid_name(True).capitalize()
@@ -373,6 +374,72 @@ def change_equipment_rental():
     print(f"\nSuccessfully updated \"{chosen_equip}\" with new rental cost: ${new_rental:,.2f}")
 
 
+def get_report_info() -> tuple[float, int, int, str, str]:
+    cust_nme = []
+    total_rev = 0
+    booking_count = 0
+    equip_nme = []
+    equip_rent = []
+    current_book_count = 0
+    equip_book = []
+
+    # gathering data from text files
+    with open("bookings_2024.txt", "r") as file:
+        for line in file:
+            sline = line.rstrip()
+            sline = sline.split(",")
+            # stores customer names into list, without repeating
+            if f"{sline[0]} {sline[1]}" not in cust_nme:
+                cust_nme.append(f"{sline[0]} {sline[1]}")
+            booking_count += 1
+
+    with open("equipment_data.txt", "r") as file:
+        for raw_line in file:
+            line = raw_line.rstrip()
+            line = line.split(",")
+            equip_nme.append(line[0])
+            equip_rent.append(line[1])
+            equip_book.append(line[3])
+
+    for name in cust_nme:
+        name = name.split(" ")
+        with open(f"{name[0]}_{name[1]}.txt", "r") as file:
+            for raw_line in file:
+                line = raw_line.rstrip()
+                line = line.split(",")
+                total_rev += float(line[6])
+
+    current_book_count = sum(equip_book)
+
+    # rough tbh
+    list_to_sort = []
+    for i in range(len(equip_nme)):
+        list_to_sort.append(f"{equip_book[i]},{equip_nme[i]}")
+    list_to_sort.sort()
+    equips = []
+    for equip in list_to_sort:
+        equip = equip.split(",")
+        equips.append(equip[1])
+    top_current_equip = equips[len(equips)-1]
+    bottom_current_equip = equips[0]
+
+    return total_rev, booking_count, current_book_count, top_current_equip, bottom_current_equip
+
+
+def generate_rental_report():
+    date_of_report = datetime.date.today().strftime("%d/%m/%Y")
+    total_revenue, total_bookings, total_current_bookings, top_current_equip, bottom_current_equip = get_report_info()
+
+
+
+
+
+
+
+
+
+
+
 def main():
     while True:
         user_choice = get_user_choice()
@@ -382,6 +449,8 @@ def main():
             review_booking()
         elif user_choice == 3:
             admin_options()
+        elif user_choice == 4:
+            generate_rental_report()
         else:
             if my_functions.verify_user_choice("Are you sure you want to exit? [Y/N]"):
                 break
