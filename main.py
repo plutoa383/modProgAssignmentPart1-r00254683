@@ -375,12 +375,15 @@ def change_equipment_rental():
 
 
 def get_report_info() -> tuple[float, int, int, str, str]:
+    """
+    extracts data and sends back information regarding the rental report
+    :return: total_rev, booking_count, current_book_count, top_current_equip, bottom_current_equip
+    """
     cust_nme = []
     total_rev = 0
     booking_count = 0
     equip_nme = []
     equip_rent = []
-    current_book_count = 0
     equip_book = []
 
     # gathering data from text files
@@ -391,12 +394,14 @@ def get_report_info() -> tuple[float, int, int, str, str]:
             # stores customer names into list, without repeating
             if f"{sline[0]} {sline[1]}" not in cust_nme:
                 cust_nme.append(f"{sline[0]} {sline[1]}")
+            # counts the number of bookings
             booking_count += 1
 
     with open("equipment_data.txt", "r") as file:
         for raw_line in file:
             line = raw_line.rstrip()
             line = line.split(",")
+            # gathers name, rent, and currently booked, and puts them in their respective lists
             equip_nme.append(line[0])
             equip_rent.append(line[1])
             equip_book.append(line[3])
@@ -407,8 +412,10 @@ def get_report_info() -> tuple[float, int, int, str, str]:
             for raw_line in file:
                 line = raw_line.rstrip()
                 line = line.split(",")
+                # calculates the total revenue ever
                 total_rev += float(line[6])
 
+    # calculates the number of equipment currently being rented
     current_book_count = sum(equip_book)
 
     # rough tbh
@@ -427,9 +434,17 @@ def get_report_info() -> tuple[float, int, int, str, str]:
 
 
 def generate_rental_report():
+    """
+    gets information regarding rental report, and presents them to user
+    :return: NONE
+    """
+    # getting current date
     date_of_report = datetime.date.today().strftime("%d/%m/%Y")
+
+    # getting information for report
     total_revenue, total_bookings, total_current_bookings, top_current_equip, bottom_current_equip = get_report_info()
 
+    # displaying report to user
     print(f"{'-'*24}\nGeneral Rental Report for {date_of_report}\n{'-'*24}")
     print(f"[1] Total Revenue: ${total_revenue:,.2f}")
     print(f"[2] Total Bookings: {total_bookings}")
