@@ -75,9 +75,9 @@ def print_receipt(fname: str, lname: str):
             line = raw_line.rstrip()
             line = line.split(",")
 
-    print(f"{'-' * 32}\n{line[0]}, here is your receipt:\n{'-' * 32}")
-    print(f"{'Equipment:':<16}{line[3]}\n{'Total Cost:':<16}${float(line[5]):,.2f}\n{'Rent Duration:':<16}{line[4]}")
-    print(f"{'-' * 32}")
+    print(f"{'-' * 40}\n{line[0]}, here is your receipt for {line[3]}:\n{'-' * 40}")
+    print(f"{'Equipment:':<16}{line[4]}\n{'Total Cost:':<16}${float(line[6]):,.2f}\n{'Rent Duration:':<16}{line[5]}")
+    print(f"{'-' * 40}")
 
 
 def make_a_booking():
@@ -97,16 +97,34 @@ def make_a_booking():
     rent_duration = my_functions.get_user_int_in_range(1, 8, f"How many days do you want to rent a \"{equipment[chosen_equip]}\" for?: ")
 
     total_cost = rent[chosen_equip] * rent_duration
-
+    date_of_booking = datetime.date.today().strftime("%d/%m/%Y")
     with open(f"{first_name}_{last_name}.txt", "a") as file:
-        print(f"{first_name},{last_name},{phone_number},{equipment[chosen_equip]},{rent_duration},{total_cost}", file=file)
+        print(f"{first_name},{last_name},{phone_number},{date_of_booking},{equipment[chosen_equip]},{rent_duration},{total_cost}", file=file)
 
     with open("bookings_2024.txt", "a") as file:
-        print(f"{first_name},{last_name},{datetime.date.today().strftime('%d/%m/%Y')}", file=file)
+        print(f"{first_name},{last_name},{date_of_booking}", file=file)
 
     update_equipment(equipment[chosen_equip])
 
     print_receipt(first_name, last_name)
+
+
+def review_booking():
+    names = []
+
+    with open("bookings_2024.txt", "r") as file:
+        for line in file:
+            sline = line.rstrip()
+            sline = sline.split(",")
+            names.append(f"{sline[0]} {sline[1]}")
+    query_fname = my_functions.get_valid_name(True).capitalize()
+    query_lname = my_functions.get_valid_name(False).capitalize()
+
+    if f"{query_fname} {query_lname}" in names:
+        print(f"\nhere is \"{query_fname} {query_lname}\"'s latest receipt:\n")
+        print_receipt(query_fname, query_lname)
+    else:
+        print(f"customer \"{query_fname} {query_lname}\" not found")
 
 
 def admin_options():
@@ -255,7 +273,7 @@ def main():
         if user_choice == 1:
             make_a_booking()
         elif user_choice == 2:
-            print("under development")
+            review_booking()
         elif user_choice == 3:
             admin_options()
         else:
