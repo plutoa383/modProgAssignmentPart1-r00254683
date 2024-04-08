@@ -54,8 +54,8 @@ def update_equipment(chosen_equip: str):
 
     for index, line in enumerate(lines):
         if chosen_equip in line:
-            line = line.rstrip()
-            sline = line.split(",")
+            sline = line.rstrip()
+            sline = sline.split(",")
             lines[index] = f"{sline[0]},{sline[1]},{int(sline[2])-1},{int(sline[3])+1}\n"
             break
 
@@ -120,11 +120,11 @@ def admin_options():
         admin_choice = my_functions.get_user_int_in_range(1, 4, "Enter index number of your choice: ")
 
         if admin_choice == 1:
-            print("add new equipment")
+            add_new_equipment()
         elif admin_choice == 2:
-            print("remove an equipment")
+            remove_equipment()
         else:
-            print("update equipment rental")
+            change_equipment_rental()
 
 
 def verify_login() -> bool:
@@ -164,6 +164,89 @@ def verify_login() -> bool:
 
     print("Too many invalid attempts")
     return False
+
+
+def add_new_equipment():
+    equipment = []
+    with open("equipment_data.txt", "r") as file:
+        for line in file:
+            sline = line.rstrip()
+            sline = sline.split(",")
+            equipment.append(sline[0].lower())
+
+    while True:
+        equip_name = my_functions.get_non_empty_string("Enter name of new equipment: ")
+        if equip_name.lower() not in equipment:
+            break
+        else:
+            print("equipment already exists")
+
+    equip_cost = my_functions.get_pos_num(f"Enter daily rental cost of \"{equip_name}\": ")
+    equip_count = my_functions.get_pos_num(f"Enter current inventory amount of \"{equip_name}\"")
+
+    with open("equipment_data.txt", "a") as file:
+        print(f"{equip_name},{equip_cost},{equip_count},0", file=file)
+
+    print(f"\nSuccessfully added {equip_count} {equip_name} to inventory")
+
+
+def remove_equipment():
+    equipment = []
+    with open("equipment_data.txt", "r") as file:
+        lines = file.readlines()
+
+    for line in lines:
+        sline = line.rstrip()
+        sline = sline.split(",")
+        equipment.append(sline[0].lower())
+
+    while True:
+        del_equip = my_functions.get_non_empty_string("Enter name of equipment to delete: ").lower()
+        if del_equip in equipment:
+            break
+        else:
+            print(f"equipment \"{del_equip}\" not found")
+
+    for index, equip in enumerate(equipment):
+        if del_equip == equip.lower():
+            lines.pop(index)
+
+    with open("equipment_data.txt", "w") as file:
+        file.writelines(lines)
+
+    print(f"\nSuccessfully removed {del_equip} from")
+
+
+def change_equipment_rental():
+    equipment = []
+    with open("equipment_data.txt", "r") as file:
+        lines = file.readlines()
+
+    for line in lines:
+        sline = line.rstrip()
+        sline = sline.split(",")
+        equipment.append(sline[0].lower())
+
+    while True:
+        chosen_equip = my_functions.get_non_empty_string("Enter name of equipment to edit: ").lower()
+        if chosen_equip in equipment:
+            break
+        else:
+            print(f"equipment \"{chosen_equip}\" not found")
+
+    new_rental = my_functions.get_pos_num("Enter new rental cost per day: ")
+
+    for index, line in enumerate(lines):
+        if chosen_equip in line:
+            sline = line.rstrip()
+            sline = sline.split(",")
+            lines[index] = f"{sline[0]},{new_rental},{sline[2]},{sline[3]}\n"
+            break
+
+    with open("equipment_data.txt", "w") as file:
+        file.writelines(lines)
+
+    print(f"\nSuccessfully updated \"{chosen_equip}\" with new rental cost: ${new_rental:,.2f}")
 
 
 def main():
